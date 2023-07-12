@@ -25,6 +25,9 @@ type Director struct {
 var movies []Movie
 
 func main() {
+
+	movies = append(movies, Movie{ID:"1", Isbn:"2323", Title:"Moviw one", Director: &Director{Firstname:"John", Lastname:"Carter"}})
+
 	r := mux.NewRouter()
 	r.HandleFunc("/movies", getMovies).Methods("GET")
 	r.HandleFunc("/movies/{id}", getMovie).Methods("GET")
@@ -32,6 +35,22 @@ func main() {
 	r.HandleFunc("/movies/{id}", updateMovie).Methods("PUT")
 	r.HandleFunc("/movies/{id}", deleteMovie).Methods("DELETE")
 
-	fmt.Printf("Starting the server at port 3000\n")
-	log.Fatal(http.ListenAndServe(":3000",r))
+	fmt.Printf("Starting the server at port 6969\n")
+	log.Fatal(http.ListenAndServe(":6969",r))
+}
+
+func getMovies(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(movies) 
+}
+
+func deleteMovie(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for index, item := range movies{
+		if item.ID == params["id"]{
+			movies = append(movies[:index], movies[index+1:]...)  // this means instead of movies[:index] have movies[index+1] therefore that entry is removed
+			break
+		}
+	}
 }
